@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.batis.mapper.PersonalHobbyMapper">
+<resultMap id="BaseResultMap" type="com.batis.bean.PersonalHobby">
+<result column="id" property="id"></result>
+<result column="city_resident_id" property="cityResidentId"></result>
+<result column="hobby_name" property="hobbyName"></result>
+<result column="hobby_code" property="hobbyCode"></result>
+</resultMap>
+<sql id="BaseTable">
+personal_hobbys
+</sql>
+<sql id="BaseColumn">
+    id,city_resident_id,hobby_name,hobby_code
+</sql>
+<select id="getPersonHobbyId" resultMap="BaseResultMap">
+SELECT <include refid="BaseColumn"/>
+FROM <include refid="BaseTable"/>
+WHERE city_resident_id = #{cityResidentId}
+</select>
+
+
+
+
+
+
+    
+</mapper>

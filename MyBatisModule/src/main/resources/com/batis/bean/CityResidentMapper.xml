@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.batis.mapper.CityResidentMapper">
+    <resultMap id="BaseResultMap" type="com.batis.bean.CityResident">
+        <result column="id" jdbcType="BIGINT" property="id"></result>
+        <result column="name" property="userName" typeHandler="com.batis.handlers.MyStringTypeHandler"></result>
+        <result column="age" jdbcType="VARCHAR" property="userAge"></result>
+        <result column="sex" jdbcType="INTEGER" property="sex"></result>
+    </resultMap>
+    <select id="selectCityResident" parameterType="java.lang.Integer" resultType="com.batis.bean.CityResident">
+        select * from city_resident where id = #{id}
+    </select>
+    <!--使用map来做映射，可读性不好,不直观-->
+    <select id="selectCityResidents" resultMap="BaseResultMap" databaseId="mysql">
+      SELECT *
+      FROM city_resident
+    </select>
+</mapper>

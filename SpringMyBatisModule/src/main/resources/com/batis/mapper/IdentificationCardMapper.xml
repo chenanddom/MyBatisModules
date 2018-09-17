@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.batis.mapper.IdentificationCardMapper">
+
+<resultMap id="BaseResultMap" type="com.batis.bean.IdentificationCard">
+    <result column="id" property="id"></result>
+    <result column="identification_number" property="identificationNumber"></result>
+    <result column="effective_date" property="effectiveDate"></result>
+    <result column="start_date" property="startDate"></result>
+</resultMap>
+<sql id="BaseTable">
+identification_card
+</sql>
+<sql id="BaseColumn">
+id,identification_number,effective_date,start_date
+</sql>
+<select id="searchIdentificationByIdCard" resultMap="BaseResultMap">
+    SELECT <include refid="BaseColumn"/>
+    FROM <include refid="BaseTable"/>
+    WHERE id = #{id}
+</select>
+
+</mapper>

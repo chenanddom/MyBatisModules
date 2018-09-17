@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--设置延迟加载的属性-->
+    <settings>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--实现按层级加载，比如我在查询身份证信息的时候不需要将爱好等信息查询出来-->
+        <setting name="aggressiveLazyLoading" value="true"/>
+        <!--设置使用log4j打印mybatis的日志-->
+        <setting name="logImpl" value="LOG4J" />
+    </settings>
+
+    <typeHandlers>
+        <typeHandler handler="com.batis.handlers.MyStringTypeHandler" jdbcType="VARCHAR" javaType="string"></typeHandler>
+    </typeHandlers>
+</configuration>

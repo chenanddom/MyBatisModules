@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource="jdbc.properties"></properties>
+    <!--设置延迟加载的属性-->
+    <settings>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--实现按层级加载，比如我在查询身份证信息的时候不需要将爱好等信息查询出来-->
+        <setting name="aggressiveLazyLoading" value="true"/>
+        <!--设置使用log4j打印mybatis的日志-->
+        <setting name="logImpl" value="LOG4J" />
+    </settings>
+
+    <typeHandlers>
+        <typeHandler handler="com.batis.handlers.MyStringTypeHandler" jdbcType="VARCHAR" javaType="string"></typeHandler>
+    </typeHandlers>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${userName}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!--默认的的情况下在3.2.3以前的代码中，则不支持type="DB_VENDOR",此处改成VENDOR则可以正确运行-->
+    <databaseIdProvider  type="com.batis.provider.MyDatabaseIdProvider">
+        <property name="MySQL" value="mysql" />
+        <property name="Oracle" value="oracle" />
+    </databaseIdProvider>
+    <mappers>
+        <!--<mapper resource="com/batis/bean/CityResidentMapper.xml"/>-->
+        <!--<package name="com.batis.mapper"></package>-->
+        <!--<mapper class="com.batis.mapper.CityResidentMapper"></mapper>-->
+        <mapper resource="com/batis/mapper/CityResidentMapper.xml"/>
+        <mapper resource="com/batis/mapper/IdentificationCardMapper.xml"/>
+        <mapper resource="com/batis/mapper/PersonalHobbyMapper.xml"/>
+    </mappers>
+</configuration>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.batis.mapper.CityResidentMapper">
+    <!--配置二级缓存-->
+    <cache/>
+    <resultMap id="BaseResultMap" type="com.batis.bean.CityResident">
+        <result column="id" jdbcType="BIGINT" property="id"></result>
+        <result column="name" property="userName" typeHandler="com.batis.handlers.MyStringTypeHandler"></result>
+        <result column="age" jdbcType="VARCHAR" property="userAge"></result>
+        <result column="sex" jdbcType="INTEGER" property="sex"></result>
+    </resultMap>
+
+    <resultMap id="BaseResultMap_2" type="com.batis.bean.CityResidentIdentificationCard">
+        <result column="id" jdbcType="BIGINT" property="id"></result>
+        <result column="name" property="userName" typeHandler="com.batis.handlers.MyStringTypeHandler"></result>
+        <result column="age" jdbcType="VARCHAR" property="userAge"></result>
+        <result column="sex" jdbcType="INTEGER" property="sex"></result>
+        <association property="identificationCard" column="id" select="com.batis.mapper.IdentificationCardMapper.searchIdentificationByIdCard" ></association>
+    </resultMap>
+
+    <resultMap id="BaseResultMap_3" type="com.batis.bean.CityResidentIdentificationCardHobby">
+        <result column="id" jdbcType="BIGINT" property="id"></result>
+        <result column="name" property="userName" typeHandler="com.batis.handlers.MyStringTypeHandler"></result>
+        <result column="age" jdbcType="VARCHAR" property="userAge"></result>
+        <result column="sex" jdbcType="INTEGER" property="sex"></result>
+        <association property="identificationCard" column="id" select="com.batis.mapper.IdentificationCardMapper.searchIdentificationByIdCard" ></association>
+        <!-- 这个地方需要注意column列表示的是主一的这一方的id-->
+        <collection property="personalHobbyList" column="id" select="com.batis.mapper.PersonalHobbyMapper.getPersonHobbyId"></collection>
+
+    </resultMap>
+    <!--定义sql元素的组成部分，其他的语句可以通过引用来使用它-->
+    <sql id="BaseTable">
+      city_resident
+    </sql>
+    <sql id="BaseColumns">
+        id,name,age,sex
+    </sql>
+    <select id="selectCityResident" parameterType="java.lang.Integer" resultType="com.batis.bean.CityResident">
+        select <include refid="BaseColumns"/>
+        from <include refid="BaseTable"/>
+        where id = #{id}
+    </select>
+    
+    <select id="selectCityResidents" resultMap="BaseResultMap" databaseId="mysql">
+      SELECT <include refid="BaseColumns"/>
+      FROM <include refid="BaseTable"/>
+    </select>
+
+    <select id="selectCityResidentList" resultType="map">
+        SELECT <include refid="BaseColumns"/>
+        FROM <include refid="BaseTable"/>
+    </select>
+
+    <select id="selectCityResidentById" resultMap="BaseResultMap_2">
+        select <include refid="BaseColumns"/>
+        from <include refid="BaseTable"/>
+        where id = #{id}
+    </select>
+    
+    <select id="selectCityResidentsById" resultMap="BaseResultMap_3">
+        select <include refid="BaseColumns"/>
+        from <include refid="BaseTable"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectPersonByNameId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BaseColumns"/>
+        FROM
+        <include refid="BaseTable"/>
+        WHERE 1=1
+        <if test="id!=null and id!=''">
+            AND id=#{id}
+        </if>
+        <if test="userName!=null and userName!=''">
+            AND name LIKE CONCAT('%',#{userName},'%')
+        </if>
+    </select>
+
+    <select id="selectPeronByConditions" resultMap="BaseResultMap">
+        SELECT
+        <include refid="BaseColumns"/>
+        FROM
+        <include refid="BaseTable"/>
+        WHERE 1=1
+        <choose>
+            <when test="cityResident.id!=null">
+                AND id=#{id}
+            </when>
+            <when test="cityResident.userName!=null and cityResident.userName!=''">
+                AND name LIKE CONCAT('%',#{cityResident.userName},'%')
+            </when>
+            <otherwise>
+                AND age IS NOT NULL AND sex IS NOT NULL
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--                                             使用where trim set元素                                                                           -->
+    <select id="findCityResidentsById" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM <include refid="BaseTable"/>
+        <where>
+            <if test="id!=null">
+                AND id=#{id}
+            </if>
+        </where>
+    </select>
+    <!--使用trim元素-->
+    <select id="findCityResidentsUseTrim" resultMap="BaseResultMap">
+    SELECT <include refid="BaseColumns"/>
+    FROM <include refid="BaseTable"/>
+    <trim prefix="where" prefixOverrides="and">
+        <if test="id!=null">
+          AND id=#{id}
+        </if>
+        <if test="userName!=null and userName!=''">
+          AND name LIKE concat('%',#{userName},'%')
+        </if>
+    </trim>
+    </select>
+    <!--使用set元素-->
+    <update id="updateCityResidentById">
+        UPDATE <include refid="BaseTable"/>
+        <set>
+          <if test="cityResident.userName!=null and cityResident.userName!=''">
+            name = #{cityResident.userName},
+          </if>
+          <if test="cityResident.userAge!=null">
+            age = #{cityResident.userAge}
+          </if>
+        </set>
+        WHERE id = #{cityResident.id}
+    </update>
+
+    <!--使用trim set元素-->
+    <update id="updateCityResidentUseTrimSetById">
+        UPDATE <include refid="BaseTable"/>
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cityResident.userName!=null and cityResident.userName!=''">
+                name = #{cityResident.userName},
+            </if>
+            <if test="cityResident.userAge!=null">
+                age = #{cityResident.userAge},
+            </if>
+        </trim>
+        WHERE id = #{cityResident.id}
+    </update>
+    
+<select id="selectCityResidentUseForeachById" resultMap="BaseResultMap">
+    SELECT <include refid="BaseColumns"/>
+    FROM <include refid="BaseTable"/>
+    WHERE id IN
+    <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+        #{id}
+    </foreach>
+</select>
+
+<select id="selectCityResidentUseBindByUserName" resultMap="BaseResultMap">
+<bind name="pattern" value="'%'+userName+'%'"></bind>
+    SELECT <include refid="BaseColumns"/>
+    FROM <include refid="BaseTable"/>
+    WHERE name LIKE #{pattern}
+</select>
+    
+</mapper>
